@@ -1,0 +1,3 @@
+ru/tinkoff/edu/java/linkparser/parser/UriParsersChainTest.class
+ru/tinkoff/edu/java/linkparser/parser/impl/GitHubUriParserTest.class
+ru/tinkoff/edu/java/linkparser/parser/impl/StackOverflowUriParserTest.class
