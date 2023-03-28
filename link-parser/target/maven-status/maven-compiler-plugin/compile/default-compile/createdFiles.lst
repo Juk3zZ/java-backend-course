@@ -1,0 +1,11 @@
+ru/tinkoff/edu/java/linkparser/parser/impl/StackOverflowUriParser.class
+ru/tinkoff/edu/java/linkparser/model/answer/StackOverflowUriParserAnswer.class
+ru/tinkoff/edu/java/linkparser/model/answer/UriParserAnswer.class
+ru/tinkoff/edu/java/linkparser/parser/api/UriParser.class
+ru/tinkoff/edu/java/linkparser/model/UserAndRepo.class
+ru/tinkoff/edu/java/linkparser/model/answer/NotMatchedUriParserAnswer.class
+ru/tinkoff/edu/java/linkparser/parser/impl/GitHubUriParser.class
+ru/tinkoff/edu/java/linkparser/parser/UriParsersChain.class
+ru/tinkoff/edu/java/linkparser/parser/impl/UnsupportedUriParser.class
+ru/tinkoff/edu/java/linkparser/model/answer/GitHubUriParserAnswer.class
+ru/tinkoff/edu/java/linkparser/parser/api/CommonUriParser.class
