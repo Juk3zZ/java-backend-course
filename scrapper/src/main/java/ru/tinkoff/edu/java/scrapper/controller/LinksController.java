@@ -18,7 +18,7 @@ public class LinksController {
     private final Random random = new Random();
 
     public LinksController() {
-        links.put(123876L, new ListLinksResponse(
+        links.put(281817353L, new ListLinksResponse(
             new ArrayList<>(
                 Arrays.asList(
                     new LinkResponse(1, "https://github.com/VladimirZaitsev21/some-repo"),
