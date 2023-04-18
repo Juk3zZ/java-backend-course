@@ -38,7 +38,7 @@ public class StartMessageCommandExecutor implements MessageCommandExecutor {
     @Override
     public String execute(Command command) {
         try {
-            scrapperClient.registerChat(command.tgChatId());
+            scrapperClient.registerChat(command.tgChatId(), command.username());
         } catch (ApiInternalServerErrorException e) {
             return messageRepo.getMessageByKey(REPLY_SERVER_ERROR_KEY, command.languageCode());
         } catch (ApiClientErrorException e) {

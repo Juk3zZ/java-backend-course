@@ -24,12 +24,13 @@ public class TelegramUserMessageUpdateHandler implements TelegramUpdateHandler<S
     public SendMessage handle(Update update) {
         var text = update.getMessage().getText();
         var chatId = update.getMessage().getChatId();
+        var userName = update.getMessage().getFrom().getUserName();
         var languageCode = update.getMessage().getFrom().getLanguageCode();
 
         var botState = getBotState(text, chatId);
         dialogsStateCache.setStateForId(chatId, botState);
 
-        var command = new Command(chatId, text, languageCode, botState);
+        var command = new Command(chatId, userName, text, languageCode, botState);
         var response = commandExecutorsManager.processStateful(command);
 
         return new SendMessage(String.valueOf(chatId), response);

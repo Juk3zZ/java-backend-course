@@ -51,7 +51,7 @@ public class HelpMessageCommandExecutorTest {
         doNothing().when(stateCache).setStateForId(tgChatIdArgumentCaptor.capture(), botStateArgumentCaptor.capture());
 
         var tgChatId = random.nextLong();
-        var result = instance.execute(new Command(tgChatId, "/help", "en", HELP));
+        var result = instance.execute(new Command(tgChatId, "Vladimir", "/help", "en", HELP));
 
         verify(messageRepo).getMessageByKey(messageKeyArgumentCaptor.capture(), languageTagArgumentCaptor.capture());
         verify(stateCache).setStateForId(tgChatIdArgumentCaptor.capture(), botStateArgumentCaptor.capture());

@@ -44,7 +44,7 @@ public class TrackMessageCommandExecutorTest {
 
         var tgChatId = random.nextLong();
         var languageCode = "en";
-        var actual = instance.execute(new Command(tgChatId, "/track", languageCode, TRACK));
+        var actual = instance.execute(new Command(tgChatId, "Vladimir", "/track", languageCode, TRACK));
 
         verify(stateCache).setStateForId(tgChatIdArgumentCaptor.capture(), botStateArgumentCaptor.capture());
         verify(messageRepo).getMessageByKey(messageKeyArgumentCaptor.capture(), languageTagArgumentCaptor.capture());

@@ -10,5 +10,7 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
 public record ApplicationConfig(
         @NotNull String test,
-        @NotNull Scheduler scheduler
+        @NotNull Scheduler scheduler,
+        @NotNull Expiration expiration,
+        @NotNull Db db
 ) {}

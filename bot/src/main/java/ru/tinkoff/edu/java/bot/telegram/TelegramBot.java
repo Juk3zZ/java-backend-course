@@ -46,4 +46,19 @@ public class TelegramBot extends TelegramLongPollingBot {
         return botUsername;
     }
 
+    public void notifyAboutLinkUpdate(String url, String description, List<Long> tgChatsIds) {
+        tgChatsIds.forEach(
+                id -> {
+                    try {
+                        execute(new SendMessage(String.valueOf(id), String.format("%s: [%s]", description, url)));
+                    } catch (TelegramApiException e) {
+                        LOGGER.error(
+                                "Couldn't send the notification [{}] about link [{}] to chat [tgChatId={}].",
+                                description, url, id
+                        );
+                    }
+                }
+        );
+    }
+
 }

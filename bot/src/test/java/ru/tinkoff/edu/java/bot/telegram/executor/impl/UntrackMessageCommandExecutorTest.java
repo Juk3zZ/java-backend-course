@@ -47,7 +47,7 @@ public class UntrackMessageCommandExecutorTest {
 
         var tgChatId = random.nextLong();
         var languageCode = "en";
-        var actual = instance.execute(new Command(tgChatId, "/untrack", languageCode, UNTRACK));
+        var actual = instance.execute(new Command(tgChatId, "Vladimir", "/untrack", languageCode, UNTRACK));
 
         verify(stateCache).setStateForId(tgChatIdArgumentCaptor.capture(), botStateArgumentCaptor.capture());
         verify(messageRepo).getMessageByKey(messageKeyArgumentCaptor.capture(), languageTagArgumentCaptor.capture());

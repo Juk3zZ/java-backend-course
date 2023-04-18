@@ -68,7 +68,7 @@ public class ListMessageCommandExecutorTest {
                 .thenReturn("You are tracking %d following links:\n\n");
 
         var tgChatId = random.nextLong();
-        var commandToExecute = new Command(tgChatId, "/list", "en", LIST);
+        var commandToExecute = new Command(tgChatId, "Vladimir", "/list", "en", LIST);
         var executeResult = instance.execute(commandToExecute);
         var expectedResult = "You are tracking 2 following links:\n\n" + gitHubUri + "\n" + stackOverflowUri + "\n";
 
@@ -93,7 +93,7 @@ public class ListMessageCommandExecutorTest {
                 .thenReturn("You are not tracking any link now.");
 
         var tgChatId = random.nextLong();
-        var commandToExecute = new Command(tgChatId, "/list", "en", LIST);
+        var commandToExecute = new Command(tgChatId, "Vladimir", "/list", "en", LIST);
         var executeResult = instance.execute(commandToExecute);
         var expectedResult = "You are not tracking any link now.";
 
@@ -118,7 +118,7 @@ public class ListMessageCommandExecutorTest {
                 .thenReturn("There are incorrect parameters in your request.");
 
         var tgChatId = random.nextLong();
-        var commandToExecute = new Command(tgChatId, "/list", "en", LIST);
+        var commandToExecute = new Command(tgChatId, "Vladimir", "/list", "en", LIST);
         var executeResult = instance.execute(commandToExecute);
         var expectedResult = "There are incorrect parameters in your request.";
 
@@ -143,7 +143,7 @@ public class ListMessageCommandExecutorTest {
                 .thenReturn("Server is currently unavailable. Try again later.");
 
         var tgChatId = random.nextLong();
-        var commandToExecute = new Command(tgChatId, "/list", "en", LIST);
+        var commandToExecute = new Command(tgChatId, "Vladimir", "/list", "en", LIST);
         var executeResult = instance.execute(commandToExecute);
         var expectedResult = "Server is currently unavailable. Try again later.";
 

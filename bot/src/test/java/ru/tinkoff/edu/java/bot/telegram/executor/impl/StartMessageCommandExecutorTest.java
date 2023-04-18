@@ -35,6 +35,8 @@ public class StartMessageCommandExecutorTest {
     @Captor
     private ArgumentCaptor<Long> tgChatIdArgumentCaptor;
     @Captor
+    private ArgumentCaptor<String> usernameArgumentCaptor;
+    @Captor
     private ArgumentCaptor<BotState> botStateArgumentCaptor;
     @Captor
     private ArgumentCaptor<String> messageKeyArgumentCaptor;
@@ -43,22 +45,24 @@ public class StartMessageCommandExecutorTest {
     private final Random random = new Random();
     @Test
     public void execute_shouldReturnOkMessageWhenNoErrors() {
-        doNothing().when(scrapperClient).registerChat(tgChatIdArgumentCaptor.capture());
+        doNothing().when(scrapperClient).registerChat(tgChatIdArgumentCaptor.capture(), usernameArgumentCaptor.capture());
         doNothing().when(dialogsStateCache).setStateForId(tgChatIdArgumentCaptor.capture(), botStateArgumentCaptor.capture());
         var expected = "You have successfully registered! Now you can track updates by links.";
         when(messageRepo.getMessageByKey(messageKeyArgumentCaptor.capture(), languageTagArgumentCaptor.capture()))
                 .thenReturn(expected);
 
         var tgChatId = random.nextLong();
-        var actual = instance.execute(new Command(tgChatId, "/start", "en", START));
+        var username = "Vladimir";
+        var actual = instance.execute(new Command(tgChatId, username,"/start", "en", START));
 
-        verify(scrapperClient).registerChat(tgChatIdArgumentCaptor.capture());
+        verify(scrapperClient).registerChat(tgChatIdArgumentCaptor.capture(), usernameArgumentCaptor.capture());
         verify(dialogsStateCache).setStateForId(tgChatIdArgumentCaptor.capture(), botStateArgumentCaptor.capture());
         verify(messageRepo).getMessageByKey(messageKeyArgumentCaptor.capture(), languageTagArgumentCaptor.capture());
 
         assertAll(
                 () -> assertEquals(expected, actual),
                 () -> assertEquals(tgChatId, tgChatIdArgumentCaptor.getValue()),
+                () -> assertEquals(username, usernameArgumentCaptor.getValue()),
                 () -> assertEquals(MAIN_MENU, botStateArgumentCaptor.getValue()),
                 () -> assertEquals("reply.start", messageKeyArgumentCaptor.getValue()),
                 () -> assertEquals("en", languageTagArgumentCaptor.getValue())
