@@ -19,6 +19,6 @@ public class UpdatesController {
 
     @PostMapping
     public void sendUpdate(@RequestBody LinkUpdate update) {
-        telegramBot.notifyAboutLinkUpdate(update.url().toString(), update.description(), update.tgChatIds());
+        telegramBot.notifyAboutLinkUpdate(update.url().toString(), update.updateType(), update.tgChatIds());
     }
 }

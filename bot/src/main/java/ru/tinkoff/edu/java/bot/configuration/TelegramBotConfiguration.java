@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.tinkoff.edu.java.bot.telegram.TelegramBot;
+import ru.tinkoff.edu.java.bot.telegram.handler.LinkUpdateHandler;
 import ru.tinkoff.edu.java.bot.telegram.handler.TelegramUserMessageUpdateHandler;
 
 import java.util.List;
@@ -60,9 +61,10 @@ public class TelegramBotConfiguration {
             String botToken,
             List<BotCommand> botCommands,
             TelegramBotsApi api,
-            TelegramUserMessageUpdateHandler handler
+            TelegramUserMessageUpdateHandler handler,
+            LinkUpdateHandler linkUpdateHandler
     ) throws TelegramApiException {
-        var bot = new TelegramBot(botUsername, botToken, botCommands, handler);
+        var bot = new TelegramBot(botUsername, botToken, botCommands, handler, linkUpdateHandler);
         api.registerBot(bot);
         bot.initBot();
         return bot;

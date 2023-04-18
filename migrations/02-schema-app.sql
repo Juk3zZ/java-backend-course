@@ -1,0 +1,1 @@
+ALTER TABLE app.links ADD update_info jsonb;

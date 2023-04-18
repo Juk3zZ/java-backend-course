@@ -1,6 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.webclient.impl;
 
 import org.springframework.web.reactive.function.client.WebClient;
+import ru.tinkoff.edu.java.scrapper.model.request.LinkUpdateType;
 import ru.tinkoff.edu.java.scrapper.webclient.api.BotClient;
 import ru.tinkoff.edu.java.scrapper.webclient.model.LinkUpdate;
 
@@ -25,10 +26,10 @@ public class HttpBotClient implements BotClient {
     }
 
     @Override
-    public void sendUpdate(long id, URI url, String description, List<Long> tgChatIds) {
+    public void sendUpdate(long id, URI url, LinkUpdateType updateType, List<Long> tgChatIds) {
         webClient.post()
                 .uri(baseUrl)
-                .bodyValue(new LinkUpdate(id, url, description, tgChatIds))
-                .retrieve().bodyToMono(Void.class).block();
+                .bodyValue(new LinkUpdate(id, url, updateType, tgChatIds))
+                .retrieve().bodyToMono(Void.class).subscribe();
     }
 }

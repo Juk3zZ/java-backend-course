@@ -9,6 +9,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.tinkoff.edu.java.bot.model.LinkUpdateType;
+import ru.tinkoff.edu.java.bot.telegram.handler.LinkUpdateHandler;
 import ru.tinkoff.edu.java.bot.telegram.handler.TelegramUpdateHandler;
 
 import java.util.List;
@@ -20,12 +22,20 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final String botUsername;
     private final List<BotCommand> botCommands;
     private final TelegramUpdateHandler<SendMessage> updateHandler;
+    private final LinkUpdateHandler linkUpdateHandler;
 
-    public TelegramBot(String botUsername, String botToken, List<BotCommand> botCommands, TelegramUpdateHandler<SendMessage> updateHandler) {
+    public TelegramBot(
+            String botUsername,
+            String botToken,
+            List<BotCommand> botCommands,
+            TelegramUpdateHandler<SendMessage> updateHandler,
+            LinkUpdateHandler linkUpdateHandler
+    ) {
         super(botToken);
         this.botUsername = botUsername;
         this.botCommands = botCommands;
         this.updateHandler = updateHandler;
+        this.linkUpdateHandler = linkUpdateHandler;
     }
 
     public void initBot() throws TelegramApiException {
@@ -46,15 +56,15 @@ public class TelegramBot extends TelegramLongPollingBot {
         return botUsername;
     }
 
-    public void notifyAboutLinkUpdate(String url, String description, List<Long> tgChatsIds) {
+    public void notifyAboutLinkUpdate(String url, LinkUpdateType updateType, List<Long> tgChatsIds) {
         tgChatsIds.forEach(
                 id -> {
                     try {
-                        execute(new SendMessage(String.valueOf(id), String.format("%s: [%s]", description, url)));
+                        execute(linkUpdateHandler.handle(url, updateType, id));
                     } catch (TelegramApiException e) {
                         LOGGER.error(
-                                "Couldn't send the notification [{}] about link [{}] to chat [tgChatId={}].",
-                                description, url, id
+                                "Couldn't send the update notification about link [{}] to chat [tgChatId={}].",
+                                url, id
                         );
                     }
                 }
