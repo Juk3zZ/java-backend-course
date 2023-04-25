@@ -1,20 +1,20 @@
-package ru.tinkoff.edu.java.scrapper.service.impl.jdbc;
+package ru.tinkoff.edu.java.scrapper.service.impl.jooq;
 
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcChatRepository;
 import ru.tinkoff.edu.java.scrapper.domain.model.Chat;
+import ru.tinkoff.edu.java.scrapper.domain.jooq.repository.JooqChatRepository;
 import ru.tinkoff.edu.java.scrapper.service.api.ChatService;
 
 @Service
-@Profile("!test")
 @Transactional
-public class JdbcChatService implements ChatService {
+@Primary
+public class JooqChatService implements ChatService {
 
-    private final JdbcChatRepository chatRepository;
+    private final JooqChatRepository chatRepository;
 
-    public JdbcChatService(JdbcChatRepository chatRepository) {
+    public JooqChatService(JooqChatRepository chatRepository) {
         this.chatRepository = chatRepository;
     }
 

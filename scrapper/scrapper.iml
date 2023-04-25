@@ -124,9 +124,12 @@
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-jdbc:3.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:5.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:6.0.3" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-tx:6.0.3" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.postgresql:postgresql:42.5.1" level="project" />
+    <orderEntry type="library" name="Maven: org.postgresql:postgresql:42.5.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.checkerframework:checker-qual:3.5.0" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-jooq:3.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-tx:6.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.jooq:jooq:3.17.6" level="project" />
+    <orderEntry type="library" name="Maven: io.r2dbc:r2dbc-spi:1.0.0.RELEASE" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.springframework.boot:spring-boot-devtools:3.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:3.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-autoconfigure:3.0.1" level="project" />

@@ -1,14 +1,14 @@
-package ru.tinkoff.edu.java.scrapper.service.impl.jdbc;
+package ru.tinkoff.edu.java.scrapper.service.impl.jooq;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.linkparser.model.answer.GitHubUriParserAnswer;
 import ru.tinkoff.edu.java.linkparser.model.answer.NotMatchedUriParserAnswer;
 import ru.tinkoff.edu.java.linkparser.model.answer.StackOverflowUriParserAnswer;
 import ru.tinkoff.edu.java.linkparser.parser.UriParsersChain;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcLinkRepository;
+import ru.tinkoff.edu.java.scrapper.domain.jooq.repository.JooqLinkRepository;
 import ru.tinkoff.edu.java.scrapper.domain.model.Link;
-import ru.tinkoff.edu.java.scrapper.model.request.LinkUpdateType;
 import ru.tinkoff.edu.java.scrapper.service.api.LinkUpdater;
 import ru.tinkoff.edu.java.scrapper.webclient.api.BotClient;
 import ru.tinkoff.edu.java.scrapper.webclient.api.GitHubClient;
@@ -22,16 +22,17 @@ import static ru.tinkoff.edu.java.scrapper.model.request.LinkUpdateType.*;
 
 @Service
 @Transactional
-public class JdbcLinkUpdater implements LinkUpdater {
+@Primary
+public class JooqLinkUpdater implements LinkUpdater {
 
-    private final JdbcLinkRepository linkRepository;
+    private final JooqLinkRepository linkRepository;
     private final GitHubClient gitHubClient;
     private final StackOverflowClient stackOverflowClient;
     private final BotClient botClient;
     private final UriParsersChain uriParsersChain;
 
-    public JdbcLinkUpdater(
-            JdbcLinkRepository linkRepository,
+    public JooqLinkUpdater(
+            JooqLinkRepository linkRepository,
             GitHubClient gitHubClient,
             StackOverflowClient stackOverflowClient,
             BotClient botClient,
@@ -83,6 +84,7 @@ public class JdbcLinkUpdater implements LinkUpdater {
 
         if (answerCount != null && stackOverflowResponse.answerCount() != (int) answerCount) {
             botClient.sendUpdate(link.id(), link.link(), STACKOVERFLOW_ANSWERS, tgChatIds);
+            updateTime = System.currentTimeMillis();
         } else if (updateTime > link.updatedAt().toInstant().toEpochMilli()) {
             botClient.sendUpdate(link.id(), link.link(), COMMON, tgChatIds);
         }

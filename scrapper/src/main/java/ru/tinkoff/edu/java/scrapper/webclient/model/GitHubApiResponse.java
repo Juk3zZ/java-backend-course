@@ -11,6 +11,7 @@ public record GitHubApiResponse(
         @JsonProperty("private") boolean isPrivate,
         @JsonProperty("created_at") OffsetDateTime createdAt,
         @JsonProperty("updated_at") OffsetDateTime updatedAt,
-        @JsonProperty("pushed_at") OffsetDateTime pushedAt
+        @JsonProperty("pushed_at") OffsetDateTime pushedAt,
+        @JsonProperty("open_issues_count") int openIssuesCount
 ) {
 }

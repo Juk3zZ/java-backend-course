@@ -13,6 +13,7 @@ public record StackOverflowItemApiResponse(
         @JsonProperty("last_activity_date") OffsetDateTime lastActivityDate,
         @JsonProperty("creation_date") OffsetDateTime creationDate,
         @JsonProperty("last_edit_date") OffsetDateTime lastEditDate,
-        @JsonProperty("link") String link
+        @JsonProperty("link") String link,
+        @JsonProperty("answer_count") int answerCount
 ) {
 }
