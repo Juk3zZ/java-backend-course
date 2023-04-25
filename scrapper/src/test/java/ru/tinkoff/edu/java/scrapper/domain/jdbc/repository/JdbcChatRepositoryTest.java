@@ -17,7 +17,7 @@ import ru.tinkoff.edu.java.scrapper.IntegrationEnvironment;
 import ru.tinkoff.edu.java.scrapper.domain.CommonConfig;
 import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.testconfig.JdbcTestConfiguration;
 import ru.tinkoff.edu.java.scrapper.domain.jdbc.mapper.ChatMapper;
-import ru.tinkoff.edu.java.scrapper.domain.model.Chat;
+import ru.tinkoff.edu.java.scrapper.domain.model.TableChat;
 import ru.tinkoff.edu.java.scrapper.domain.jdbc.util.QueriesSource;
 
 import javax.sql.DataSource;
@@ -67,7 +67,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Transactional
     @Rollback
     public void add_shouldInsertOneRowToTable() {
-        var chat = new Chat(random.nextLong(), "Vladimir");
+        var chat = new TableChat(random.nextLong(), "Vladimir");
 
         var addResult = instance.add(chat);
         var chatById = getChatFromDB(chat);
@@ -82,7 +82,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Transactional
     @Rollback
     public void remove_shouldDeleteCorrectRow() {
-        var chat = new Chat(random.nextLong(), "Vladimir");
+        var chat = new TableChat(random.nextLong(), "Vladimir");
         var deletedRows = jdbcTemplate.update(
                 "INSERT INTO app.chats(tg_chat_id, nickname) VALUES (?, ?)",
                 chat.tgChatId(), chat.nickname()
@@ -102,9 +102,9 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Rollback
     public void findAll_shouldReturnListOfChats() {
         var chats = List.of(
-                new Chat(random.nextLong(), "Vladimir"),
-                new Chat(random.nextLong(), "Alexander"),
-                new Chat(random.nextLong(), "Alexey")
+                new TableChat(random.nextLong(), "Vladimir"),
+                new TableChat(random.nextLong(), "Alexander"),
+                new TableChat(random.nextLong(), "Alexey")
         );
 
         jdbcTemplate.update(
@@ -130,7 +130,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Transactional
     @Rollback
     public void findById_shouldReturnCorrectChat() {
-        var chat = new Chat(random.nextLong(), "Vladimir");
+        var chat = new TableChat(random.nextLong(), "Vladimir");
         jdbcTemplate.update(
                 "INSERT INTO app.chats(tg_chat_id, nickname) VALUES (?, ?)",
                 chat.tgChatId(), chat.nickname()
@@ -147,11 +147,11 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     public void findById_shouldReturnNullIfNoData() {
         assertNull(instance.findById(random.nextLong()));
     }
-    private Chat getChatFromDB(Chat chat) {
+    private TableChat getChatFromDB(TableChat chat) {
         try {
             return jdbcTemplate.queryForObject(
                     "SELECT * FROM app.chats WHERE tg_chat_id = ?",
-                    (rs, rowNum) -> new Chat(rs.getLong(1), rs.getString(2)),
+                    (rs, rowNum) -> new TableChat(rs.getLong(1), rs.getString(2)),
                     chat.tgChatId()
             );
         } catch (EmptyResultDataAccessException e) {

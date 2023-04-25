@@ -4,9 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jooq.DSLContext;
 import org.jooq.JSONB;
-import org.springframework.stereotype.Repository;
-import ru.tinkoff.edu.java.scrapper.domain.model.Link;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.mapper.LinkFieldsMapper;
+import ru.tinkoff.edu.java.scrapper.domain.model.TableLink;
 import ru.tinkoff.edu.java.scrapper.domain.util.MappingUtils;
 
 import java.sql.Timestamp;
@@ -16,9 +15,9 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
-import static ru.tinkoff.edu.java.scrapper.domain.jooq.Tables.*;
+import static ru.tinkoff.edu.java.scrapper.domain.jooq.Tables.LINKS;
+import static ru.tinkoff.edu.java.scrapper.domain.jooq.Tables.TRACKINGS;
 
-@Repository
 public class JooqLinkRepository {
 
     private final DSLContext dslContext;
@@ -33,12 +32,12 @@ public class JooqLinkRepository {
         this.linkFieldsMapper = linkFieldsMapper;
     }
 
-    public List<Link> findAll() {
+    public List<TableLink> findAll() {
         return dslContext
                 .select(LINKS.ID, LINKS.LINK, LINKS.UPDATED_AT, LINKS.UPDATE_INFO).from(LINKS).fetch().map(linkFieldsMapper);
     }
 
-    public List<Link> findAll(long tgChatId) {
+    public List<TableLink> findAll(long tgChatId) {
         return dslContext
                 .select(LINKS.ID, LINKS.LINK, LINKS.UPDATED_AT, LINKS.UPDATE_INFO)
                 .from(LINKS)
@@ -46,7 +45,7 @@ public class JooqLinkRepository {
                 .where(TRACKINGS.TG_CHAT_ID.eq(tgChatId)).fetch().map(linkFieldsMapper);
     }
 
-    public Map<Link, List<Long>> findOld(long expiration, long currentTime) {
+    public Map<TableLink, List<Long>> findOld(long expiration, long currentTime) {
         var timeBorder = Instant.ofEpochMilli(currentTime - expiration);
         var entries = dslContext
                 .select(LINKS.ID, LINKS.LINK, LINKS.UPDATED_AT, LINKS.UPDATE_INFO, TRACKINGS.TG_CHAT_ID)
@@ -61,7 +60,7 @@ public class JooqLinkRepository {
         return mappingUtils.createMapFromEntries(entries);
     }
 
-    public Link add(long tgChatId, String link) {
+    public TableLink add(long tgChatId, String link) {
         var foundLinks = dslContext.select(LINKS.ID, LINKS.LINK, LINKS.UPDATED_AT, LINKS.UPDATE_INFO).from(LINKS)
                 .where(LINKS.LINK.eq(link)).fetch().map(linkFieldsMapper);
 
@@ -81,7 +80,7 @@ public class JooqLinkRepository {
         }
     }
 
-    public Link save(String link, Timestamp updatedAt, Map<String, Object> updateInfo) {
+    public TableLink save(String link, Timestamp updatedAt, Map<String, Object> updateInfo) {
         var candidates = dslContext
                 .select(LINKS.ID, LINKS.LINK, LINKS.UPDATED_AT, LINKS.UPDATE_INFO).from(LINKS)
                 .where(LINKS.LINK.eq(link)).fetch().map(linkFieldsMapper);
@@ -90,10 +89,10 @@ public class JooqLinkRepository {
 
         if (!candidates.isEmpty()) {
             var currentLink = candidates.get(0);
-            currentLink = new Link(currentLink.id(), currentLink.link(), updatedAt, updateInfo);
+            currentLink = new TableLink(currentLink.id(), currentLink.link(), updatedAt, updateInfo);
             return dslContext
                     .update(LINKS)
-                    .set(LINKS.LINK, currentLink.link().toString())
+                    .set(LINKS.LINK, currentLink.link())
                     .set(LINKS.UPDATED_AT, currentLink.updatedAt().toLocalDateTime())
                     .set(LINKS.UPDATE_INFO, JSONB.valueOf(updateInfoJson))
                     .returning(LINKS.ID, LINKS.LINK, LINKS.UPDATED_AT, LINKS.UPDATE_INFO).fetch().map(linkFieldsMapper).get(0);
@@ -114,7 +113,7 @@ public class JooqLinkRepository {
     }
 
 
-    public Link remove(long tgChatId, String link) {
+    public TableLink remove(long tgChatId, String link) {
         var candidates = dslContext
                 .select(LINKS.ID, LINKS.LINK, LINKS.UPDATED_AT, LINKS.UPDATE_INFO).from(LINKS)
                 .where(LINKS.LINK.eq(link)).fetch().map(linkFieldsMapper);

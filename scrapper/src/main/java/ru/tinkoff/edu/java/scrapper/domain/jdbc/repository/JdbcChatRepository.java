@@ -1,18 +1,14 @@
 package ru.tinkoff.edu.java.scrapper.domain.jdbc.repository;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
-import ru.tinkoff.edu.java.scrapper.domain.model.Chat;
 import ru.tinkoff.edu.java.scrapper.domain.jdbc.mapper.ChatMapper;
 import ru.tinkoff.edu.java.scrapper.domain.jdbc.util.QueriesSource;
+import ru.tinkoff.edu.java.scrapper.domain.model.TableChat;
 import ru.tinkoff.edu.java.scrapper.exception.DatabaseException;
 
 import java.util.List;
 
-@Repository
-@Profile("!test")
 public class JdbcChatRepository {
 
     public static final String SELECT_KEY = "app.chats.select";
@@ -29,16 +25,16 @@ public class JdbcChatRepository {
         this.queriesSource = queriesSource;
     }
 
-    public List<Chat> findAll() {
+    public List<TableChat> findAll() {
         return jdbcTemplate.query(queriesSource.getQuery(SELECT_KEY), chatMapper);
     }
 
-    public Chat findById(long tgChatId) {
+    public TableChat findById(long tgChatId) {
         var foundChat = jdbcTemplate.query(queriesSource.getQuery(SELECT_BY_ID_KEY), chatMapper, tgChatId);
         return foundChat.stream().findFirst().orElse(null);
     }
 
-    public boolean add(Chat chat) {
+    public boolean add(TableChat chat) {
         try {
             jdbcTemplate.update(queriesSource.getQuery(INSERT_KEY), chat.tgChatId(), chat.nickname());
             return true;

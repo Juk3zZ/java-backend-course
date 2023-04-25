@@ -1,15 +1,11 @@
 package ru.tinkoff.edu.java.scrapper.service.impl.jooq;
 
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tinkoff.edu.java.scrapper.domain.model.Chat;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.repository.JooqChatRepository;
+import ru.tinkoff.edu.java.scrapper.domain.model.TableChat;
 import ru.tinkoff.edu.java.scrapper.service.api.ChatService;
 
-@Service
 @Transactional
-@Primary
 public class JooqChatService implements ChatService {
 
     private final JooqChatRepository chatRepository;
@@ -20,9 +16,9 @@ public class JooqChatService implements ChatService {
 
     @Override
     public void register(long tgChatId, String username) {
-        var isRegistered = chatRepository.add(new Chat(tgChatId, username));
+        var isRegistered = chatRepository.add(new TableChat(tgChatId, username));
         if (!isRegistered)
-            throw new IllegalArgumentException(String.format("Trying to add existing %s", new Chat(tgChatId, username)));
+            throw new IllegalArgumentException(String.format("Trying to add existing %s", new TableChat(tgChatId, username)));
     }
 
     @Override

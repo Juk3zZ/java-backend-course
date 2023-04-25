@@ -17,13 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.IntegrationEnvironment;
 import ru.tinkoff.edu.java.scrapper.domain.CommonConfig;
 import ru.tinkoff.edu.java.scrapper.domain.jdbc.mapper.LinkMapper;
-import ru.tinkoff.edu.java.scrapper.domain.model.Link;
 import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.testconfig.JdbcTestConfiguration;
 import ru.tinkoff.edu.java.scrapper.domain.jdbc.util.QueriesSource;
+import ru.tinkoff.edu.java.scrapper.domain.model.TableLink;
 import ru.tinkoff.edu.java.scrapper.domain.util.MappingUtils;
 
 import javax.sql.DataSource;
-import java.net.URI;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -135,7 +134,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         var savedLink = jdbcTemplate.queryForObject("SELECT * FROM app.links WHERE link LIKE ?", linkMapper, link);
 
         assertAll(
-                () -> assertEquals(link, savedLink.link().toString()),
+                () -> assertEquals(link, savedLink.link()),
                 () -> assertEquals(currentTime, savedLink.updatedAt()),
                 () -> assertEquals(updateInfo, savedLink.updateInfo())
         );
@@ -160,7 +159,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         var storedLinkId = jdbcTemplate.queryForList("SELECT link_id FROM app.trackings", Long.class);
 
         assertAll(
-                () -> assertEquals(removedLink, new Link(linkId, URI.create(linkToSave), updatedAt, emptyMap())),
+                () -> assertEquals(removedLink, new TableLink(linkId, linkToSave, updatedAt, emptyMap())),
                 () -> assertTrue(storedTgChatId.isEmpty()),
                 () -> assertTrue(storedLinkId.isEmpty())
         );
@@ -173,21 +172,21 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         var gitUpdateInfo = Map.of("open_issues_count", (Object) 1);
         var stackoverflowUpdateInfo = Map.of("answer_count", (Object) 29);
         var links = new java.util.ArrayList<>(List.of(
-                new Link(
+                new TableLink(
                         1,
-                        URI.create("https://github.com/VladimirZaitsev21/some-repo"),
+                        "https://github.com/VladimirZaitsev21/some-repo",
                         new Timestamp(System.currentTimeMillis()),
                         gitUpdateInfo
                 ),
-                new Link(
+                new TableLink(
                         2,
-                        URI.create("https://github.com/JohnDoe/navigator"),
+                        "https://github.com/JohnDoe/navigator",
                         new Timestamp(System.currentTimeMillis()),
                         gitUpdateInfo
                 ),
-                new Link(
+                new TableLink(
                         3,
-                        URI.create("https://stackoverflow.com/questions/1642028/what-is-the-operator-in-c"),
+                        "https://stackoverflow.com/questions/1642028/what-is-the-operator-in-c",
                         new Timestamp(System.currentTimeMillis()),
                         stackoverflowUpdateInfo
                 )
@@ -201,17 +200,17 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         pGobject1.setValue("{\"answer_count\": 29}");
         jdbcTemplate.update(
                 "INSERT INTO app.links(link, updated_at, update_info) VALUES (?, ?, ?), (?, ?, ?), (?, ?, ?)",
-                links.get(0).link().toString(), links.get(0).updatedAt(), pGobject,
-                links.get(1).link().toString(), links.get(1).updatedAt(), pGobject,
-                links.get(2).link().toString(), links.get(2).updatedAt(), pGobject1
+                links.get(0).link(), links.get(0).updatedAt(), pGobject,
+                links.get(1).link(), links.get(1).updatedAt(), pGobject,
+                links.get(2).link(), links.get(2).updatedAt(), pGobject1
         );
 
         var allLinks = instance.findAll();
 
         var linksIds = jdbcTemplate.queryForList("SELECT id FROM app.links", Long.class);
-        links.set(0, new Link(linksIds.get(0), links.get(0).link(), links.get(0).updatedAt(), links.get(0).updateInfo()));
-        links.set(1, new Link(linksIds.get(1), links.get(1).link(), links.get(1).updatedAt(), links.get(1).updateInfo()));
-        links.set(2, new Link(linksIds.get(2), links.get(2).link(), links.get(2).updatedAt(), links.get(2).updateInfo()));
+        links.set(0, new TableLink(linksIds.get(0), links.get(0).link(), links.get(0).updatedAt(), links.get(0).updateInfo()));
+        links.set(1, new TableLink(linksIds.get(1), links.get(1).link(), links.get(1).updatedAt(), links.get(1).updateInfo()));
+        links.set(2, new TableLink(linksIds.get(2), links.get(2).link(), links.get(2).updatedAt(), links.get(2).updateInfo()));
 
         assertEquals(links, allLinks);
     }
@@ -222,17 +221,17 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     public void findAll_shouldReturnTrackingLinksForTgChatId() {
         var tgChatId = random.nextLong();
         var links = new java.util.ArrayList<>(List.of(
-                new Link(1, URI.create("https://github.com/VladimirZaitsev21/some-repo"), new Timestamp(System.currentTimeMillis()), emptyMap()),
-                new Link(2, URI.create("https://github.com/JohnDoe/navigator"), new Timestamp(System.currentTimeMillis()), emptyMap()),
-                new Link(3, URI.create("https://stackoverflow.com/questions/1642028/what-is-the-operator-in-c"), new Timestamp(System.currentTimeMillis()), emptyMap())
+                new TableLink(1, "https://github.com/VladimirZaitsev21/some-repo", new Timestamp(System.currentTimeMillis()), emptyMap()),
+                new TableLink(2, "https://github.com/JohnDoe/navigator", new Timestamp(System.currentTimeMillis()), emptyMap()),
+                new TableLink(3, "https://stackoverflow.com/questions/1642028/what-is-the-operator-in-c", new Timestamp(System.currentTimeMillis()), emptyMap())
         ));
 
         jdbcTemplate.update("INSERT INTO app.chats(tg_chat_id, nickname) VALUES (?, 'Vladimir')", tgChatId);
         jdbcTemplate.update(
                 "INSERT INTO app.links(link, updated_at) VALUES (?, ?), (?, ?), (?, ?)",
-                links.get(0).link().toString(), links.get(0).updatedAt(),
-                links.get(1).link().toString(), links.get(1).updatedAt(),
-                links.get(2).link().toString(), links.get(2).updatedAt()
+                links.get(0).link(), links.get(0).updatedAt(),
+                links.get(1).link(), links.get(1).updatedAt(),
+                links.get(2).link(), links.get(2).updatedAt()
         );
         var linksIds = jdbcTemplate.queryForList("SELECT id FROM app.links LIMIT 2", Long.class);
         jdbcTemplate.update(
@@ -242,8 +241,8 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
         var allLinksById = instance.findAll(tgChatId);
 
-        links.set(0, new Link(linksIds.get(0), links.get(0).link(), links.get(0).updatedAt(), links.get(0).updateInfo()));
-        links.set(1, new Link(linksIds.get(1), links.get(1).link(), links.get(1).updatedAt(), links.get(1).updateInfo()));
+        links.set(0, new TableLink(linksIds.get(0), links.get(0).link(), links.get(0).updatedAt(), links.get(0).updateInfo()));
+        links.set(1, new TableLink(linksIds.get(1), links.get(1).link(), links.get(1).updatedAt(), links.get(1).updateInfo()));
         assertEquals(links.subList(0, 2), allLinksById);
     }
 
@@ -255,21 +254,21 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         var gitUpdateInfo = Map.of("open_issues_count", (Object) 1);
         var stackoverflowUpdateInfo = Map.of("answer_count", (Object) 29);
         var links = new java.util.ArrayList<>(List.of(
-                new Link(
+                new TableLink(
                         1,
-                        URI.create("https://github.com/VladimirZaitsev21/some-repo"),
+                        "https://github.com/VladimirZaitsev21/some-repo",
                         new Timestamp(System.currentTimeMillis() - 3600000),
                         gitUpdateInfo
                 ),
-                new Link(
+                new TableLink(
                         2,
-                        URI.create("https://github.com/JohnDoe/navigator"),
+                        "https://github.com/JohnDoe/navigator",
                         new Timestamp(System.currentTimeMillis() - 3600000),
                         gitUpdateInfo
                 ),
-                new Link(
+                new TableLink(
                         3,
-                        URI.create("https://stackoverflow.com/questions/1642028/what-is-the-operator-in-c"),
+                        "https://stackoverflow.com/questions/1642028/what-is-the-operator-in-c",
                         new Timestamp(System.currentTimeMillis()),
                         stackoverflowUpdateInfo
                 )
@@ -285,9 +284,9 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         pGobject1.setValue("{\"answer_count\": 29}");
         jdbcTemplate.update(
                 "INSERT INTO app.links(link, updated_at, update_info) VALUES (?, ?, ?), (?, ?, ?), (?, ?, ?)",
-                links.get(0).link().toString(), links.get(0).updatedAt(), pGobject,
-                links.get(1).link().toString(), links.get(1).updatedAt(), pGobject,
-                links.get(2).link().toString(), links.get(2).updatedAt(), pGobject1
+                links.get(0).link(), links.get(0).updatedAt(), pGobject,
+                links.get(1).link(), links.get(1).updatedAt(), pGobject,
+                links.get(2).link(), links.get(2).updatedAt(), pGobject1
         );
 
         var linksIds = jdbcTemplate.queryForList("SELECT id FROM app.links", Long.class);
@@ -298,9 +297,9 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
         var oldLinks = instance.findOld(3000000, System.currentTimeMillis());
 
-        links.set(0, new Link(linksIds.get(0), links.get(0).link(), links.get(0).updatedAt(), links.get(0).updateInfo()));
-        links.set(1, new Link(linksIds.get(1), links.get(1).link(), links.get(1).updatedAt(), links.get(1).updateInfo()));
-        links.set(2, new Link(linksIds.get(2), links.get(2).link(), links.get(2).updatedAt(), links.get(2).updateInfo()));
+        links.set(0, new TableLink(linksIds.get(0), links.get(0).link(), links.get(0).updatedAt(), links.get(0).updateInfo()));
+        links.set(1, new TableLink(linksIds.get(1), links.get(1).link(), links.get(1).updatedAt(), links.get(1).updateInfo()));
+        links.set(2, new TableLink(linksIds.get(2), links.get(2).link(), links.get(2).updatedAt(), links.get(2).updateInfo()));
 
         assertEquals(Map.of(links.get(0), List.of(tgChatId), links.get(1), List.of(tgChatId)), oldLinks);
     }

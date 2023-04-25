@@ -1,14 +1,10 @@
 package ru.tinkoff.edu.java.scrapper.service.impl.jdbc;
 
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.domain.jdbc.repository.JdbcChatRepository;
-import ru.tinkoff.edu.java.scrapper.domain.model.Chat;
+import ru.tinkoff.edu.java.scrapper.domain.model.TableChat;
 import ru.tinkoff.edu.java.scrapper.service.api.ChatService;
 
-@Service
-@Profile("!test")
 @Transactional
 public class JdbcChatService implements ChatService {
 
@@ -20,9 +16,9 @@ public class JdbcChatService implements ChatService {
 
     @Override
     public void register(long tgChatId, String username) {
-        var isRegistered = chatRepository.add(new Chat(tgChatId, username));
+        var isRegistered = chatRepository.add(new TableChat(tgChatId, username));
         if (!isRegistered)
-            throw new IllegalArgumentException(String.format("Trying to add existing %s", new Chat(tgChatId, username)));
+            throw new IllegalArgumentException(String.format("Trying to add existing %s", new TableChat(tgChatId, username)));
     }
 
     @Override

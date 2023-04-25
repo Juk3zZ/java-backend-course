@@ -6,21 +6,20 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.postgresql.util.PGobject;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.scrapper.domain.model.Link;
+import ru.tinkoff.edu.java.scrapper.domain.model.TableLink;
 
-import java.net.URI;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class LinkMapper implements RowMapper<Link> {
+public class LinkMapper implements RowMapper<TableLink> {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public Link mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public TableLink mapRow(ResultSet rs, int rowNum) throws SQLException {
         var object = (PGobject) rs.getObject(4);
         Map<String, Object> updateInfoFinal = null;
 
@@ -36,9 +35,9 @@ public class LinkMapper implements RowMapper<Link> {
             }
         }
 
-        return new Link(
+        return new TableLink(
                 rs.getLong(1),
-                URI.create(rs.getString(2)),
+                rs.getString(2),
                 rs.getTimestamp(3),
                 updateInfoFinal == null ? new HashMap<>() : updateInfoFinal
         );
