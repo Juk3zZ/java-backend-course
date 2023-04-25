@@ -44,7 +44,7 @@ public class IncorrectMessageCommandExecutorTest {
                 .thenReturn("Incorrect command. Try type command from menu.");
 
         var tgChatId = random.nextLong();
-        var givenCommand = new Command(tgChatId, "I don't know your commands", "en", INCORRECT);
+        var givenCommand = new Command(tgChatId, "Vladimir", "I don't know your commands", "en", INCORRECT);
         var executeResult = instance.execute(givenCommand);
 
         verify(dialogsStateCache).setStateForId(tgChatIdArgumentCaptor.capture(), botStateArgumentCaptor.capture());

@@ -7,8 +7,8 @@ import ru.tinkoff.edu.java.scrapper.webclient.model.StackOverflowRootApiResponse
 
 public class HttpStackOverflowClient implements StackOverflowClient {
 
-    private static final String BASE_URL = "https://api.stackexchange.com/2.3/questions/";
-    private static final String STACKOVERFLOW_MANDATORY_REQUEST_PARAMS = "?order=desc&sort=activity&site=stackoverflow";
+    private static final String BASE_URL = "https://api.stackexchange.com/2.3/questions";
+    private static final String ID_PATH_VAR = "{id}";
 
     private final String baseUrl;
     private final WebClient webClient;
@@ -25,8 +25,15 @@ public class HttpStackOverflowClient implements StackOverflowClient {
 
     @Override
     public StackOverflowItemApiResponse fetchQuestion(long id) {
-        var response = webClient.get()
-                .uri(baseUrl + id + STACKOVERFLOW_MANDATORY_REQUEST_PARAMS)
+        var response = webClient
+                .get()
+                .uri(
+                        baseUrl,
+                        uriBuilder -> uriBuilder.pathSegment(ID_PATH_VAR)
+                                .queryParam("order", "desc")
+                                .queryParam("sort", "activity")
+                                .queryParam("site", "stackoverflow").build(id)
+                )
                 .retrieve().bodyToMono(StackOverflowRootApiResponse.class).block();
         return response.items().get(0);
     }

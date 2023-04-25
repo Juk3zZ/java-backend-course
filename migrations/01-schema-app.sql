@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS app.links
 (
     id serial primary key,
     link varchar(200) NOT NULL,
+    updated_at timestamp,
     CONSTRAINT unique_link UNIQUE (link)
 );
 
@@ -24,7 +25,7 @@ CREATE TABLE IF NOT EXISTS app.trackings
         REFERENCES app.chats (tg_chat_id) MATCH SIMPLE
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    CONSTRAINT "link_FK" FOREIGN KEY (tg_chat_id)
+    CONSTRAINT "link_FK" FOREIGN KEY (link_id)
         REFERENCES app.links (id) MATCH SIMPLE
         ON UPDATE CASCADE
         ON DELETE CASCADE

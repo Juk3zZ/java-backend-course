@@ -21,6 +21,7 @@ public class HttpScrapperClient implements ScrapperClient {
     public static final String TG_CHAT_ID_HEADER = "Tg-Chat-Id";
     private static final Logger LOGGER = LogManager.getLogger(HttpScrapperClient.class);
     private static final String BASE_URL = "http://localhost:8080";
+    public static final String START_TG_CHAT_URL = "/tg-chat/{id}/{username}";
     public static final String TG_CHAT_URL = "/tg-chat/{id}";
     public static final String LINKS_URL = "/links";
 
@@ -38,9 +39,13 @@ public class HttpScrapperClient implements ScrapperClient {
     }
 
     @Override
-    public void registerChat(long chatId) {
+    public void registerChat(long chatId, String username) {
         webClient.post()
-                .uri(baseUrl, uriBuilder -> uriBuilder.path(TG_CHAT_URL).build(chatId))
+                .uri(baseUrl, uriBuilder -> {
+                    var build = uriBuilder.path(START_TG_CHAT_URL).build(chatId, username);
+                    System.out.println(build);
+                    return build;
+                })
                 .retrieve()
                 .onStatus(
                         HttpStatusCode::is4xxClientError,
@@ -127,6 +132,7 @@ public class HttpScrapperClient implements ScrapperClient {
 
     private Mono<? extends RuntimeException> onClientErrorInternal(ClientResponse resp, String when) {
         LOGGER.error("Incorrect Scrapper API request while " + when);
+        System.out.println(resp);
         return resp.bodyToMono(ApiErrorResponse.class).map(ApiClientErrorException::new);
     }
 

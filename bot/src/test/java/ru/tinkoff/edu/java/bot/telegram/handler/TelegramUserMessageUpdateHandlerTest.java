@@ -60,6 +60,7 @@ public class TelegramUserMessageUpdateHandlerTest {
         message.setText(messageText);
         message.setChat(chat);
         var from = new User();
+        from.setUserName("Vladimir");
         from.setLanguageCode("en");
         message.setFrom(from);
         update.setMessage(message);
@@ -74,7 +75,7 @@ public class TelegramUserMessageUpdateHandlerTest {
                 () -> assertEquals(tgChatId, Long.parseLong(handleResult.getChatId())),
                 () -> assertEquals(tgChatId, tgChatIdArgumentCaptor.getValue()),
                 () -> assertEquals(expectedBotState, botStateArgumentCaptor.getValue()),
-                () -> assertEquals(new Command(tgChatId, messageText, "en", expectedBotState), commandArgumentCaptor.getValue())
+                () -> assertEquals(new Command(tgChatId, "Vladimir", messageText, "en", expectedBotState), commandArgumentCaptor.getValue())
         );
     }
 
@@ -118,6 +119,7 @@ public class TelegramUserMessageUpdateHandlerTest {
         message.setText(messageText);
         message.setChat(chat);
         var from = new User();
+        from.setUserName("Vladimir");
         from.setLanguageCode("en");
         message.setFrom(from);
         update.setMessage(message);
@@ -129,7 +131,7 @@ public class TelegramUserMessageUpdateHandlerTest {
         assertAll(
                 () -> assertEquals(executorReturns, handleResult.getText()),
                 () -> assertEquals(tgChatId, Long.parseLong(handleResult.getChatId())),
-                () -> assertEquals(new Command(tgChatId, messageText, "en", expectedBotState), commandArgumentCaptor.getValue())
+                () -> assertEquals(new Command(tgChatId, "Vladimir", messageText, "en", expectedBotState), commandArgumentCaptor.getValue())
         );
     }
 

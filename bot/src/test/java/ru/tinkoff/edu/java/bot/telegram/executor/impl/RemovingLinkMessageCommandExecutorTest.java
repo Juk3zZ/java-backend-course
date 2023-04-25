@@ -59,7 +59,7 @@ public class RemovingLinkMessageCommandExecutorTest {
 
         var tgChatId = random.nextLong();
         var languageTag = "en";
-        var actual = instance.execute(new Command(tgChatId, uri, languageTag, REMOVING_LINK));
+        var actual = instance.execute(new Command(tgChatId, "Vladimir", uri, languageTag, REMOVING_LINK));
 
         verify(scrapperClient).deleteLink(tgChatIdArgumentCaptor.capture(), linkArgumentCaptor.capture());
         verify(stateCache).setStateForId(tgChatIdArgumentCaptor.capture(), botStateArgumentCaptor.capture());
@@ -85,7 +85,7 @@ public class RemovingLinkMessageCommandExecutorTest {
 
         var tgChatId = random.nextLong();
         var languageTag = "en";
-        var actual = instance.execute(new Command(tgChatId, uri, languageTag, REMOVING_LINK));
+        var actual = instance.execute(new Command(tgChatId, "Vladimir", uri, languageTag, REMOVING_LINK));
 
         verify(scrapperClient).deleteLink(tgChatIdArgumentCaptor.capture(), linkArgumentCaptor.capture());
         verify(stateCache).setStateForId(tgChatIdArgumentCaptor.capture(), botStateArgumentCaptor.capture());
@@ -111,7 +111,7 @@ public class RemovingLinkMessageCommandExecutorTest {
 
         var tgChatId = random.nextLong();
         var languageTag = "en";
-        var actual = instance.execute(new Command(tgChatId, uri, languageTag, REMOVING_LINK));
+        var actual = instance.execute(new Command(tgChatId, "Vladimir", uri, languageTag, REMOVING_LINK));
 
         verify(scrapperClient).deleteLink(tgChatIdArgumentCaptor.capture(), linkArgumentCaptor.capture());
         verify(stateCache).setStateForId(tgChatIdArgumentCaptor.capture(), botStateArgumentCaptor.capture());

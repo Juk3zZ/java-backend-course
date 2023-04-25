@@ -5,7 +5,7 @@ import ru.tinkoff.edu.java.bot.scrapperapi.model.LinkResponse;
 
 public interface ScrapperClient {
 
-    void registerChat(long chatId);
+    void registerChat(long chatId, String username);
 
     void deleteChat(long chatId);
 
