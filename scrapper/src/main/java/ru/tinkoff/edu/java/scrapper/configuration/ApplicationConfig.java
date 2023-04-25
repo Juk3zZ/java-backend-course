@@ -12,5 +12,6 @@ public record ApplicationConfig(
         @NotNull String test,
         @NotNull Scheduler scheduler,
         @NotNull Expiration expiration,
-        @NotNull Db db
+        @NotNull Db db,
+        @NotNull AccessType accessType
 ) {}

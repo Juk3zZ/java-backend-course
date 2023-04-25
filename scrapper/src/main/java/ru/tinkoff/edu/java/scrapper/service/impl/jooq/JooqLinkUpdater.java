@@ -1,28 +1,30 @@
 package ru.tinkoff.edu.java.scrapper.service.impl.jooq;
 
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.linkparser.model.answer.GitHubUriParserAnswer;
 import ru.tinkoff.edu.java.linkparser.model.answer.NotMatchedUriParserAnswer;
 import ru.tinkoff.edu.java.linkparser.model.answer.StackOverflowUriParserAnswer;
 import ru.tinkoff.edu.java.linkparser.parser.UriParsersChain;
 import ru.tinkoff.edu.java.scrapper.domain.jooq.repository.JooqLinkRepository;
-import ru.tinkoff.edu.java.scrapper.domain.model.Link;
+import ru.tinkoff.edu.java.scrapper.domain.model.TableLink;
 import ru.tinkoff.edu.java.scrapper.service.api.LinkUpdater;
+import ru.tinkoff.edu.java.scrapper.service.model.Link;
 import ru.tinkoff.edu.java.scrapper.webclient.api.BotClient;
 import ru.tinkoff.edu.java.scrapper.webclient.api.GitHubClient;
 import ru.tinkoff.edu.java.scrapper.webclient.api.StackOverflowClient;
 
+import java.net.URI;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import static ru.tinkoff.edu.java.scrapper.model.request.LinkUpdateType.*;
 
-@Service
 @Transactional
-@Primary
+@RequiredArgsConstructor
 public class JooqLinkUpdater implements LinkUpdater {
 
     private final JooqLinkRepository linkRepository;
@@ -31,25 +33,11 @@ public class JooqLinkUpdater implements LinkUpdater {
     private final BotClient botClient;
     private final UriParsersChain uriParsersChain;
 
-    public JooqLinkUpdater(
-            JooqLinkRepository linkRepository,
-            GitHubClient gitHubClient,
-            StackOverflowClient stackOverflowClient,
-            BotClient botClient,
-            UriParsersChain uriParsersChain
-    ) {
-        this.linkRepository = linkRepository;
-        this.gitHubClient = gitHubClient;
-        this.stackOverflowClient = stackOverflowClient;
-        this.botClient = botClient;
-        this.uriParsersChain = uriParsersChain;
-    }
-
     @Override
     public void update(long expiration) {
         var linksWithTgChatIds = linkRepository.findOld(expiration, System.currentTimeMillis());
         var links = linksWithTgChatIds.keySet();
-        for (var link : links) updateLink(link, linksWithTgChatIds.get(link));
+        for (var link : links) updateLink(convert(link), linksWithTgChatIds.get(link));
     }
 
     private void updateLink(Link link, List<Long> tgChatIds) {
@@ -89,5 +77,14 @@ public class JooqLinkUpdater implements LinkUpdater {
             botClient.sendUpdate(link.id(), link.link(), COMMON, tgChatIds);
         }
         linkRepository.save(link.link().toString(), Timestamp.from(Instant.ofEpochMilli(updateTime)), link.updateInfo());
+    }
+
+    private Link convert(TableLink source) {
+        return new Link(
+                source.id(),
+                URI.create(source.link()),
+                OffsetDateTime.ofInstant(source.updatedAt().toInstant(), ZoneId.systemDefault()),
+                source.updateInfo()
+        );
     }
 }

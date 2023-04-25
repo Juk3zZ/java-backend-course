@@ -3,12 +3,10 @@ package ru.tinkoff.edu.java.scrapper.domain.jdbc.repository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.postgresql.util.PGobject;
-import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
-import ru.tinkoff.edu.java.scrapper.domain.model.Link;
-import ru.tinkoff.edu.java.scrapper.domain.jdbc.util.QueriesSource;
 import ru.tinkoff.edu.java.scrapper.domain.jdbc.mapper.LinkMapper;
+import ru.tinkoff.edu.java.scrapper.domain.jdbc.util.QueriesSource;
+import ru.tinkoff.edu.java.scrapper.domain.model.TableLink;
 import ru.tinkoff.edu.java.scrapper.domain.util.MappingUtils;
 
 import java.sql.SQLException;
@@ -17,8 +15,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-@Repository
-@Profile("!test")
 public class JdbcLinkRepository {
 
     public static final String SELECT_KEY = "app.links.select";
@@ -44,17 +40,17 @@ public class JdbcLinkRepository {
         this.objectMapper = objectMapper;
     }
 
-    public List<Link> findAll() {
+    public List<TableLink> findAll() {
         return jdbcTemplate.query(queriesSource.getQuery(SELECT_KEY), linkMapper);
     }
 
-    public List<Link> findAll(long tgChatId) {
+    public List<TableLink> findAll(long tgChatId) {
         return jdbcTemplate.query(queriesSource.getQuery(SELECT_BY_TG_ID_KEY), linkMapper, tgChatId);
     }
 
-    public Map<Link, List<Long>> findOld(long expiration, long currentTime) {
+    public Map<TableLink, List<Long>> findOld(long expiration, long currentTime) {
         var timeBorder = Timestamp.from(Instant.ofEpochMilli(currentTime - expiration));
-        List<Map.Entry<Link, Long>> entries = jdbcTemplate.query(
+        List<Map.Entry<TableLink, Long>> entries = jdbcTemplate.query(
                 queriesSource.getQuery(SELECT_BY_UPDATED_AT_KEY),
                 (rs, rowNum) -> Map.entry(linkMapper.mapRow(rs, rowNum), rs.getLong(5)),
                 timeBorder
@@ -62,7 +58,7 @@ public class JdbcLinkRepository {
         return mappingUtils.createMapFromEntries(entries);
     }
 
-    public Link add(long tgChatId, String link) {
+    public TableLink add(long tgChatId, String link) {
         var linksFound = jdbcTemplate.query(queriesSource.getQuery(SELECT_BY_LINK_KEY), linkMapper, link);
         if (!linksFound.isEmpty()) {
             var storedLink = linksFound.get(0);
@@ -81,13 +77,13 @@ public class JdbcLinkRepository {
         }
     }
 
-    public Link save(String link, Timestamp updatedAt, Map<String, Object> updateInfo) {
+    public TableLink save(String link, Timestamp updatedAt, Map<String, Object> updateInfo) {
         var linksFound = jdbcTemplate.query(queriesSource.getQuery(SELECT_BY_LINK_KEY), linkMapper, link);
         var updateInfoPG = mapToPGObject(mapToJson(updateInfo));
 
         if (!linksFound.isEmpty()) {
             var currentLink = linksFound.get(0);
-            currentLink = new Link(currentLink.id(), currentLink.link(), updatedAt, updateInfo);
+            currentLink = new TableLink(currentLink.id(), currentLink.link(), updatedAt, updateInfo);
             jdbcTemplate.update(queriesSource.getQuery(UPDATE_KEY), updatedAt, updateInfoPG, currentLink.id());
             return currentLink;
         } else {
@@ -115,7 +111,7 @@ public class JdbcLinkRepository {
         return pGobject;
     }
 
-    public Link remove(long tgChatId, String link) {
+    public TableLink remove(long tgChatId, String link) {
         var candidates = jdbcTemplate.query(queriesSource.getQuery(SELECT_TRACKING_BY_LINK_KEY), linkMapper, link, tgChatId);
         if (!candidates.isEmpty()) {
             jdbcTemplate.update(queriesSource.getQuery(DELETE_TRACKING_KEY), tgChatId, link);

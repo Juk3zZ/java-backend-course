@@ -7,9 +7,8 @@ import org.jooq.JSONB;
 import org.jooq.Record4;
 import org.jooq.RecordMapper;
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.scrapper.domain.model.Link;
+import ru.tinkoff.edu.java.scrapper.domain.model.TableLink;
 
-import java.net.URI;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -17,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class LinkFieldsMapper implements RecordMapper<Record4<Integer, String, LocalDateTime, JSONB>, Link> {
+public class LinkFieldsMapper implements RecordMapper<Record4<Integer, String, LocalDateTime, JSONB>, TableLink> {
 
     private final ObjectMapper objectMapper;
 
@@ -26,7 +25,7 @@ public class LinkFieldsMapper implements RecordMapper<Record4<Integer, String, L
     }
 
     @Override
-    public Link map(Record4<Integer, String, LocalDateTime, JSONB> record) {
+    public TableLink map(Record4<Integer, String, LocalDateTime, JSONB> record) {
         Map<String, Object> updateInfo = null;
 
         if (record.component4() != null) {
@@ -40,9 +39,9 @@ public class LinkFieldsMapper implements RecordMapper<Record4<Integer, String, L
             }
         }
 
-        return new Link(
+        return new TableLink(
                 record.component1(),
-                URI.create(record.component2()),
+                record.component2(),
                 record.component3() == null ? null : Timestamp.from(record.component3().atZone(ZoneId.systemDefault()).toInstant()),
                 updateInfo == null ? new HashMap<>() : updateInfo
         );

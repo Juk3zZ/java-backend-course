@@ -1,7 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.domain.util;
 
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.scrapper.domain.model.Link;
+import ru.tinkoff.edu.java.scrapper.domain.model.TableLink;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,8 +11,8 @@ import java.util.Map;
 @Component
 public class MappingUtils {
 
-    public Map<Link, List<Long>> createMapFromEntries(List<Map.Entry<Link, Long>> entries) {
-        var result = new HashMap<Link, List<Long>>();
+    public Map<TableLink, List<Long>> createMapFromEntries(List<Map.Entry<TableLink, Long>> entries) {
+        var result = new HashMap<TableLink, List<Long>>();
         for (var entry : entries) {
             var list = result.get(entry.getKey());
             if (list == null) {
