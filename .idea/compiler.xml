@@ -8,11 +8,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="scrapper" />
         <module name="link-parser" />
+        <module name="common" />
         <module name="bot" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="bot" target="17" />
+      <module name="common" target="17" />
       <module name="java-backend-course" target="17" />
       <module name="link-parser" target="17" />
       <module name="scrapper" target="17" />
@@ -21,6 +23,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="bot" options="-parameters" />
+      <module name="common" options="-parameters" />
       <module name="link-parser" options="-parameters" />
       <module name="scrapper" options="-parameters" />
     </option>

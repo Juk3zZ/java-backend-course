@@ -42,6 +42,7 @@ public class TelegramUserMessageUpdateHandler implements TelegramUpdateHandler<S
             case "/untrack" -> UNTRACK;
             case "/help" -> HELP;
             case "/list" -> LIST;
+
             default -> {
                 var cachedState = dialogsStateCache.getStateById(chatId);
                 yield cachedState.equals(NEW_LINK) || cachedState.equals(REMOVING_LINK) ? cachedState : INCORRECT;

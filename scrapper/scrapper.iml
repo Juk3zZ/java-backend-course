@@ -83,7 +83,7 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-webflux:6.0.3" level="project" />
     <orderEntry type="library" name="Maven: io.projectreactor:reactor-core:3.5.1" level="project" />
     <orderEntry type="library" name="Maven: org.reactivestreams:reactive-streams:1.0.4" level="project" />
-    <orderEntry type="library" name="Maven: ru.zvo:common:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="module" module-name="common" />
     <orderEntry type="module" module-name="link-parser" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-core:2.17.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.17.1" level="project" />

@@ -23,17 +23,17 @@ public class TelegramBotConfiguration {
 
     @Bean
     public BotCommand helpCommand() {
-        return new BotCommand("/help", "справка по командам");
+        return new BotCommand("/help", "помощь по командам");
     }
 
     @Bean
     public BotCommand trackCommand() {
-        return new BotCommand("/track", "начать отслеживание ссылки");
+        return new BotCommand("/track", "начать отслеживать ссылку");
     }
 
     @Bean
     public BotCommand untrackCommand() {
-        return new BotCommand("/untrack", "прекратить отслеживание ссылки");
+        return new BotCommand("/untrack", "перестать  отслеживать  ссылку");
     }
 
     @Bean
